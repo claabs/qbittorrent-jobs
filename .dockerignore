@@ -1,0 +1,6 @@
+**/*
+!qbittorrent_jobs/**/*
+!pyproject.toml
+!run.py
+!uv.lock
+!docker-entrypoint.sh
