@@ -5,12 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "Python Debugger: HNR",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "qbittorrent_jobs/hnr_tagger.py",
             "args": ["-c", "./config/hnr.jsonc"],
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "Python Debugger: Tracker Uptime",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "qbittorrent_jobs/tracker_uptime.py",
+            "args": ["-f", "./config/tracker-stats.json"],
+            "console": "integratedTerminal"
+        },
     ]
 }
