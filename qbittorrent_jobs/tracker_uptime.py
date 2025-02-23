@@ -1,4 +1,5 @@
 import argparse
+import csv
 import datetime
 import json
 import os
@@ -27,6 +28,28 @@ class TrackerUptimeMonitor:
         # Save with alphabetical sorting
         with open(self.stats_file, "w") as f:
             json.dump(self.stats, f, indent=2, sort_keys=True)
+
+        # Save as CSV
+        csv_file = os.path.splitext(self.stats_file)[0] + ".csv"
+        with open(csv_file, "w", newline="") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "url",
+                    "up_checks",
+                    "total_checks",
+                    "percent",
+                    "first_seen",
+                    "last_updated",
+                    "last_status",
+                    "last_seen",
+                ],
+            )
+            writer.writeheader()
+            for url, data in self.stats.items():
+                row = {"url": url}
+                row.update(data)
+                writer.writerow(row)
 
     def connect(self, host, username, password):
         self.client = Client(
@@ -83,6 +106,9 @@ class TrackerUptimeMonitor:
             self.stats[url]["total_checks"] += 1
             if status == "up":
                 self.stats[url]["up_checks"] += 1
+            self.stats[url]["percent"] = round(
+                self.stats[url]["up_checks"] / self.stats[url]["total_checks"] * 100
+            )
             self.stats[url]["last_status"] = status
             self.stats[url]["last_updated"] = now
             del current_statuses[url]
@@ -94,6 +120,7 @@ class TrackerUptimeMonitor:
             self.stats[url] = {
                 "up_checks": 1 if status == "up" else 0,
                 "total_checks": 1,
+                "percent": 100 if status == "up" else 0,
                 "first_seen": now,
                 "last_updated": now,
                 "last_status": status,
