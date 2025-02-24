@@ -84,8 +84,10 @@ class QBitTagManager:
                 for tracker in torrent.trackers
             )
 
+            torrent_progress = torrent.downloaded / torrent.total_size
+
             meets_criteria = (
-                torrent.progress >= config["min_progress"]
+                torrent_progress >= config["min_progress"]
                 and torrent.seeding_time < config["max_seeding"]
                 and tracker_matches
                 and torrent.downloaded > 0

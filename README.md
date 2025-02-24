@@ -8,7 +8,7 @@ A script that finds potential hit and run torrents in qBittorrent and tags them.
 - have downloaded bytes (no cross-seeds)
 - match the configured tracker
 - under the configured maximum seed time
-- above the configured minimum progress percentage
+- above the configured minimum download percentage
 
 ## Tracker Uptime
 
@@ -45,13 +45,13 @@ File: `/config/hnr.jsonc`
 [
     {
         "tracker": "tracker.example.com", // The hostname of the private tracker
-        "min_progress": 1, // The torrent must have 100% progress to be tagged
+        "min_progress": 1, // The torrent must have 100% downloaded of total size to be tagged
         "max_seeding": 518400, // The torrent must be seeding for under 6 days (in seconds)
         "tag": "example-hnr"
     },
     {
         "tracker": "torrent.local", // The hostname of the private tracker
-        "min_progress": 0.2, // The torrent must have at least 20% progress to be tagged
+        "min_progress": 0.2, // The torrent must have at least 20% downloaded of total size to be tagged
         "max_seeding": 432000, // The torrent must be seeding for under 5 days (in seconds)
         "tag": "local-hnr"
     }
