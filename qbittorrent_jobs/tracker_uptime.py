@@ -3,7 +3,6 @@ import csv
 import datetime
 import json
 import os
-from urllib.parse import urlparse
 
 from dotenv import load_dotenv
 from qbittorrentapi import Client, LoginFailed
@@ -74,7 +73,6 @@ class TrackerUptimeMonitor:
                 if url.startswith("**"):
                     # Skip non-trackers
                     continue
-                tracker_hostname = urlparse(url).hostname
 
                 if tracker.status in [0, 1]:
                     # Skip trackers that have not been contacted or are disabled
@@ -84,8 +82,8 @@ class TrackerUptimeMonitor:
                 # 2: Working
                 # 3: Updating
                 # 4: Not Working
-                current_status = status_map.get(tracker_hostname, 4)
-                status_map[tracker_hostname] = min(current_status, tracker.status)
+                current_status = status_map.get(url, 4)
+                status_map[url] = min(current_status, tracker.status)
 
         return status_map
 
