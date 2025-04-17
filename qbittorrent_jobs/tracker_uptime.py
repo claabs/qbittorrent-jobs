@@ -24,6 +24,11 @@ class TrackerUptimeMonitor:
             return {}
 
     def _save_stats(self):
+        for data in self.stats.values():
+            if "last_seen" in data:
+                # remove deprecated field
+                del data["last_seen"]
+
         # Save with alphabetical sorting
         with open(self.stats_file, "w") as f:
             json.dump(self.stats, f, indent=2, sort_keys=True)
@@ -41,7 +46,7 @@ class TrackerUptimeMonitor:
                     "first_seen",
                     "last_updated",
                     "last_status",
-                    "last_seen",
+                    "last_up",
                 ],
             )
             writer.writeheader()
@@ -95,8 +100,6 @@ class TrackerUptimeMonitor:
         # Update existing trackers
         for url in list(self.stats.keys()):
             if url not in current_statuses:
-                # Preserve stats but mark inactive
-                self.stats[url]["last_seen"] = now
                 continue
 
             status = "up" if current_statuses[url] == 2 else "down"
@@ -104,11 +107,13 @@ class TrackerUptimeMonitor:
             self.stats[url]["total_checks"] += 1
             if status == "up":
                 self.stats[url]["up_checks"] += 1
+                self.stats[url]["last_up"] = now
             self.stats[url]["percent"] = round(
                 self.stats[url]["up_checks"] / self.stats[url]["total_checks"] * 100
             )
             self.stats[url]["last_status"] = status
             self.stats[url]["last_updated"] = now
+
             del current_statuses[url]
 
         # Add new trackers
@@ -122,7 +127,7 @@ class TrackerUptimeMonitor:
                 "first_seen": now,
                 "last_updated": now,
                 "last_status": status,
-                "last_seen": now,
+                "last_up": now if status == "up" else None,
             }
 
         self._save_stats()
