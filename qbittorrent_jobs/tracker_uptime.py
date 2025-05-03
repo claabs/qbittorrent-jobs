@@ -15,6 +15,7 @@ class TrackerManager:
         self.client = None
         self.stats_file = stats_file
         self.stats = self._load_stats()
+        self.active_stats = {}
 
     def _load_stats(self):
         try:
@@ -104,16 +105,25 @@ class TrackerManager:
 
             status = "up" if current_statuses[url] == 2 else "down"
 
-            self.stats[url]["total_checks"] += 1
-            if status == "up":
-                self.stats[url]["up_checks"] += 1
-                self.stats[url]["last_up"] = now
-            self.stats[url]["percent"] = round(
-                self.stats[url]["up_checks"] / self.stats[url]["total_checks"] * 100
-            )
-            self.stats[url]["last_status"] = status
-            self.stats[url]["last_updated"] = now
+            active_tracker_stats = {
+                "up_checks": self.stats[url].get("up_checks", 0) + 1
+                if status == "up"
+                else self.stats[url].get("up_checks", 0),
+                "total_checks": self.stats[url].get("total_checks", 0) + 1,
+                "percent": round(
+                    (self.stats[url].get("up_checks", 0) + (1 if status == "up" else 0))
+                    / (self.stats[url].get("total_checks", 0) + 1)
+                    * 100
+                ),
+                "last_status": status,
+                "last_updated": now,
+                "last_up": now
+                if status == "up"
+                else self.stats[url].get("last_up", None),
+            }
 
+            self.stats[url] = active_tracker_stats
+            self.active_stats[url] = active_tracker_stats
             del current_statuses[url]
 
         # Add new trackers
@@ -136,7 +146,7 @@ class TrackerManager:
         """Remove trackers with less than 50% uptime and not recently up"""
         now = datetime.datetime.now(datetime.UTC)
         trackers_to_remove = []
-        for url, tracker in self.stats.items():
+        for url, tracker in self.active_stats.items():
             if tracker["percent"] < 50 and (
                 "last_up" not in tracker
                 or tracker["last_up"] is None
