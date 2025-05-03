@@ -3,6 +3,7 @@ import csv
 import datetime
 import json
 import os
+import urllib.parse
 
 from dotenv import load_dotenv
 from qbittorrentapi import Client, LoginFailed
@@ -155,8 +156,13 @@ class TrackerManager:
                 ).total_seconds()
                 > 86400
             ):
-                trackers_to_remove.append(url)
-                print(f"Removing tracker {url} with {tracker['percent']}% uptime")
+                encoded_url = urllib.parse.quote(
+                    url, safe=":/?&="
+                )  # URL-encode the to handle zero-width spaces
+                trackers_to_remove.append(encoded_url)
+                print(
+                    f"Removing tracker {encoded_url} with {tracker['percent']}% uptime"
+                )
         self.client.torrents_remove_trackers("*", trackers_to_remove)
 
 
