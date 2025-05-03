@@ -147,7 +147,7 @@ class TrackerManager:
             ):
                 trackers_to_remove.append(url)
                 print(f"Removing tracker {url} with {tracker['percent']}% uptime")
-        # self.client.torrents_remove_trackers("*", trackers_to_remove)
+        self.client.torrents_remove_trackers("*", trackers_to_remove)
 
 
 if __name__ == "__main__":
