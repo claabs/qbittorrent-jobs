@@ -10,7 +10,7 @@ from qbittorrentapi import Client, LoginFailed
 load_dotenv()
 
 
-class TrackerUptimeMonitor:
+class TrackerManager:
     def __init__(self, stats_file):
         self.client = None
         self.stats_file = stats_file
@@ -132,6 +132,22 @@ class TrackerUptimeMonitor:
 
         self._save_stats()
 
+    def prune_trackers(self):
+        """Remove trackers with less than 50% uptime and not recently up"""
+        now = datetime.datetime.now(datetime.UTC)
+        trackers_to_remove = []
+        for url, tracker in self.stats.items():
+            if tracker["percent"] < 50 and (
+                tracker["last_up"] is None
+                or (
+                    now - datetime.datetime.fromisoformat(tracker["last_up"])
+                ).total_seconds()
+                > 86400
+            ):
+                trackers_to_remove.append(url)
+                print(f"Removing tracker {url} with {tracker['percent']}% uptime")
+        # self.client.torrents_remove_trackers("*", trackers_to_remove)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -143,16 +159,17 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    monitor = TrackerUptimeMonitor(args.file)
-    monitor.connect(
+    tracker_manager = TrackerManager(args.file)
+    tracker_manager.connect(
         host=os.getenv("QB_HOST", "http://localhost:8080"),
         username=os.getenv("QB_USER", "admin"),
         password=os.getenv("QB_PASS", "adminadmin"),
     )
 
     try:
-        monitor.update_stats()
+        tracker_manager.update_stats()
         print("Tracker statistics updated successfully")
+        tracker_manager.prune_trackers()
 
     finally:
-        monitor.client.auth_log_out()
+        tracker_manager.client.auth_log_out()
