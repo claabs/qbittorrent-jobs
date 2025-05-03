@@ -138,7 +138,8 @@ class TrackerManager:
         trackers_to_remove = []
         for url, tracker in self.stats.items():
             if tracker["percent"] < 50 and (
-                tracker["last_up"] is None
+                "last_up" not in tracker
+                or tracker["last_up"] is None
                 or (
                     now - datetime.datetime.fromisoformat(tracker["last_up"])
                 ).total_seconds()
