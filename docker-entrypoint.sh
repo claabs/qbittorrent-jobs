@@ -12,6 +12,7 @@ UPTIME_CRON_SCHEDULE=${UPTIME_CRON_SCHEDULE:-"15 * * * *"}
 echo "Run on startup: ${RUN_ON_STARTUP}"
 if [ "$RUN_ON_STARTUP" = "true" ]; then
     python /app/qbittorrent_jobs/hnr_tagger.py
+    python /app/qbittorrent_jobs/tracker_error_tagger.py
     python /app/qbittorrent_jobs/tracker_uptime.py
 fi
 
