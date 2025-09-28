@@ -10,6 +10,10 @@ A script that finds potential hit and run torrents in qBittorrent and tags them.
 - under the configured maximum seed time
 - above the configured minimum download percentage
 
+## Tracker Error Tagger
+
+A script that finds private torrents that have all trackers errored (for trumped/deleted torrents).
+
 ## Tracker Uptime
 
 A script that logs the status of all trackers in all torrents, considering "Working" to be "up" and the remaining statuses "down". Helps with determining what trackers to delete from your client over a certaim duration.
@@ -28,6 +32,7 @@ A script that logs the status of all trackers in all torrents, considering "Work
 | QB_PASS              | `password`           | `adminadmin`     | qBittorrent password                                                         |
 | QB_HOST              | `192.168.1.100:8080` | `localhost:8080` | HTTP URL for the qBittorrent web UI, with port                               |
 | HNR_CRON_SCHEDULE    | `* * * * *`          | `45 * * * *`     | Cron schedule of when to run the HNR tagger job                              |
+| ERROR_CRON_SCHEDULE  | `* * * * *`          | `50 * * * *`     | Cron schedule of when to run the tracker error tagger job                    |
 | UPTIME_CRON_SCHEDULE | `* * * * *`          | `15 * * * *`     | Cron schedule of when to run the tracker uptime job                          |
 | RUN_ON_STARTUP       | `false`              | `true`           | If true, runs the script immediately on startup, then schedules the cron job |
 | RUN_ONCE             | `true`               | `false`          | If true, does not schedule the cron job                                      |

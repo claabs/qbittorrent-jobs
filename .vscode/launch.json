@@ -20,5 +20,12 @@
             "args": ["-f", "./config/tracker-stats.json"],
             "console": "integratedTerminal"
         },
+        {
+            "name": "Python Debugger: Tracker Error",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "qbittorrent_jobs/tracker_error_tagger.py",
+            "console": "integratedTerminal"
+        },
     ]
 }
