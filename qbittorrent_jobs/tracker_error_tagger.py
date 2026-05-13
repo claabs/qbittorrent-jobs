@@ -38,7 +38,8 @@ class QBitTagManager:
         """Check if any tracker has an error status"""
         private_trackers = [t for t in torrent.trackers if t.msg != 'This torrent is private']
         # enum 4 = NOT_WORKING
-        return all(tracker.status == 4 for tracker in private_trackers)
+        # enum 5 = TRACKER_ERROR
+        return all(tracker.status in [4, 5] for tracker in private_trackers)
 
     def _apply_tagging_rules(self, torrents):
         """Apply progress/seeding rules and return valid hashes"""
