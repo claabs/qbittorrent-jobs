@@ -5,7 +5,7 @@ description = "A script that finds potential hit and run torrents in qBittorrent
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "json5>=0.10.0",
+    "json5>=0.15.0",
     "python-dotenv>=1.0.1",
     "qbittorrent-api>=2026.6.0",
 ]
